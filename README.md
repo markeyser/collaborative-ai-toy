@@ -59,77 +59,106 @@ Toy project to teach best practices in collaborative, high-quality, and reproduc
 └── .env                           <- Environment variables configuration file (not visible).
 ```
 
-## Getting Started
+## Installation
 
-Sure, here's an updated version of the "Prerequisites" section in your README.md file, written from a software developer's perspective:
+### 1. Setting Up a Virtual Environment with Poetry
 
-### Prerequisites
+Create an isolated environment for your project using Poetry:
 
-- **Development Environment**:
-  - Visual Studio Code (VS Code) desktop
-  - AWS Cloud Code Editor
-  - GitHub Codespaces
-  - Any other cloud-powered development environment compatible with VS Code or VS Code Open Source
+1. **Verify Python Version**: Confirm Poetry is set to the desired Python version with:
 
-- **Python**:
-  - Ensure Python is installed on your system. This project is compatible with Python 3.x.
+   ```zsh
+   poetry env use 3.10.13
+   ```
 
-### Installation
+2. **Install Dependencies**: At your project root (where `pyproject.toml` is), run:
 
-1. Create a new Conda environment by cloning the base environment:
+   ```shell
+   poetry install
+   ```
 
-    ```sh
-    conda create --name collaborativeaitoy_env --clone base
-    ```
+3. **Activate Environment**: Enter the environment with:
 
-    This command creates a new Conda environment named
-    `collaborativeaitoy_env` by cloning the existing `base`
-    environment, which includes a long list of Python packages needed
-    for development.
+   ```shell
+   poetry shell
+   ```
 
-    >Please ensure you use the `collaborativeaitoy_env` virtual
-    >environment name. The `.vscode/settings.json` file assumes that the
-    >path to your virtual environment is
-    >`/home/sagemaker-user/.conda/envs/collaborativeaitoy_env`. If
-    >your virtual environment path differs, please update the
-    >`.vscode/settings.json` file accordingly.
+4. **Check Installation**: Ensure all dependencies are installed:
 
+   ```shell
+   poetry show
+   ```
 
-1. **Activate the new Conda environment**
+5. **Environment Info**: Get detailed environment information:
 
-    ```sh
-    conda activate collaborativeaitoy_env
-    ```
-2. **Clone the repository**
+   ```shell
+   poetry env info
+   ```
 
-    ```sh
-    git clone git@git.nylcloud.com:CDSAi/fp-servicesage-model.git
-    cd fp-servicesage-model
-    ```
+#### 4.2. Auto-Activate Poetry Environment in VS Code
 
-3. **Install Poetry using pip**
+To ensure that VS Code automatically uses your Poetry virtual
+environment, especially when working remotely, follow these steps:
 
-    ```sh
-    pip install poetry
-    ```
+1. **Obtain the Virtual Environment Path**:
+   - Open the VS Code terminal.
+   - Retrieve the path to your Poetry-managed virtual environment by
+     executing:
 
-4. **Install all dependencies (including development dependencies) using
-   Poetry**
+     ```bash
+     poetry env info --path
+     ```
 
-    ```sh
-    poetry install
-    ```
+   This command will provide the path to the virtual environment. Note
+   this path as you will need it to configure the remote settings.
 
-    This command tells `poetry` to install the package and include both
-    the main dependencies specified under `[tool.poetry.dependencies]`
-    and the development dependencies specified under
-    `[tool.poetry.dev-dependencies]` in the `pyproject.toml` file.
+2. **Accessing Remote Settings in VS Code**:
+   - Click the gear icon located on the bottom left corner of VS Code to
+     open the Command Palette.
+   - Go to `Settings`, then select `Remote [Environment]`, where
+     `[Environment]` corresponds to your remote environment type (e.g.,
+     Remote-SSH, Remote-Containers).
+   - On the top right corner of the settings UI, click on the `{}` icon
+     to open the `settings.json` file for remote settings.
 
-    > Notice we are using Conda to create and manage the Python virtual
-    > environment, and we are using Poetry to handle package
-    > installation and dependency management within that environment.
+3. **Create and Configure the Remote Settings JSON File**:
+   - Based on the path obtained from the `poetry env info --path`
+     command, you need to configure the `Remote settings.json` file in
+     your VS Code environment. Use a generic placeholder for the path in
+     this professional guide:
 
-5. **Adding Extensions in VS Code**
+     ```json
+     {
+       "python.terminal.activateEnvInCurrentTerminal": true,
+       "python.defaultInterpreterPath": "<Your-Virtual-Env-Path>",
+       "ruff.args": [
+           "--config=pyproject.toml",
+           "--preview"
+       ],
+       "ruff.path": [
+           "<Your-Virtual-Env-Path>/bin/ruff"
+       ],
+       "ruff.interpreter": [
+           "<Your-Virtual-Env-Path>/bin/python"
+       ]
+     }
+     ```
+
+     - **`<Your-Virtual-Env-Path>`**: Replace this placeholder with the
+       actual path to your virtual environment.
+     - **`python.defaultInterpreterPath`**: Sets the Python interpreter
+       to the one located in your virtual environment.
+     - **`ruff.args`**: Includes all necessary command-line arguments
+       for `ruff`.
+     - **`ruff.path`** and **`ruff.interpreter`**: Make sure these paths
+       point directly to the executables within your Poetry environment.
+
+By implementing these steps, VS Code will automatically activate your
+Poetry virtual environment whenever you open a terminal session in your
+remote workspace, ensuring all Python executions and tool uses are
+correctly configured for your environment.
+
+### 2. Adding Extensions in VS Code
 
    1. **Find Extensions View**: Open the Extensions view by clicking the
       Extensions icon in the Sidebar or by pressing `Ctrl+Shift+X`.
@@ -146,100 +175,75 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
    4. **Confirm Installation**: After selecting the extensions, confirm
       the installation and wait for the process to complete.
 
-6. **Create the `.env` file**
+### 3. Updating CSpell Dictionary with Python Terms
 
-    ```sh
-    touch .env
-    ```
+Improve spell checking by adding Python library terms to CSpell:
 
-    This file will be used to store all configuration secrets. Add your secrets to this file following the format:
+```bash
+make cspell_dictionary
+```
 
-    ```
-    SECRET_KEY=your_secret_key
-    DATABASE_URL=your_database_url
-    ```
+This enriches CSpell's dictionary with terms from your project's
+Python libraries, reducing false positives on technical jargon.
 
-7. **Updating CSpell Dictionary with Python Terms**
+### 4. Set up your environment variables
 
-    Improve spell checking by adding Python library terms to CSpell:
+Before contributing to the project, you need to set up your
+environment variables to access different AWS resources. Follow
+these steps:
 
-    ```bash
-    make cspell_dictionary
-    ```
+Update the `.env` file with your settings:
 
-    This enriches CSpell's dictionary with terms from your project's
-    Python libraries, reducing false positives on technical jargon.
+Open the `.env` file in a text editor and add the necessary AWS
+credentials and configuration details.
 
-8. **Set up your environment variables**
+```sh
+# Example content for .env file
+AWS_ACCESS_KEY_ID=your_access_key_id
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+AWS_DEFAULT_REGION=your_default_region
+```
 
-    Before contributing to the project, you need to set up your
-    environment variables to access different AWS resources. Follow
-    these steps:
+### 5. Set up pre-commit hooks
 
-    Update the `.env` file with your settings:
+To ensure code quality and consistency, we use pre-commit hooks for linting, formatting, generating documentation, and running tests. Follow these steps to set up pre-commit hooks:
 
-    Open the `.env` file in a text editor and add the necessary AWS
-    credentials and configuration details.
+a. **Install the pre-commit hooks**
 
-    ```sh
-    # Example content for .env file
-    AWS_ACCESS_KEY_ID=your_access_key_id
-    AWS_SECRET_ACCESS_KEY=your_secret_access_key
-    AWS_DEFAULT_REGION=your_default_region
-    ```
+```sh
+pre-commit install
+```
 
-9.  **Set up Docker (if needed)**
+This command sets up the pre-commit hooks defined in the `.pre-commit-config.yaml` file. The hooks will now run automatically on every commit.
 
-    ```sh
-    docker build -t rag-qa-system .
-    ```
+b. **Run all pre-commit hooks on all files**
 
-11. **Set up pre-commit hooks**
+```sh
+pre-commit run --all-files
+```
 
-    To ensure code quality and consistency, we use pre-commit hooks for
-    linting, formatting, generating documentation, and running tests.
-    Follow these steps to set up pre-commit hooks:
+Expected output:
 
-    a. **Install the pre-commit hooks**
+```plaintext
+run tests................................................................Passed
+black-formatter..........................................................Passed
+black-jupyter-formatter..................................................Passed
+ruff-linter..............................................................Passed
+mypy.....................................................................Passed
+trim trailing whitespace.................................................Passed
+fix end of files.........................................................Passed
+debug statements (python)................................................Passed
+detect private key.......................................................Passed
+check for added large files..............................................Passed
+prettier.................................................................Passed
+restricted file and section..............................................Passed
+filename snake case......................................................Passed
+generate documentation...................................................Passed
+```
 
-    ```sh
-    pre-commit install
-    ```
+In the output above, "Passed" indicates that each pre-commit hook has successfully run.
 
-    This command sets up the pre-commit hooks defined in the
-    `.pre-commit-config.yaml` file. The hooks will now run automatically
-    on every commit.
-
-    b. **Run all pre-commit hooks on all files**
-
-    ```sh
-    pre-commit run --all-files
-    ```
-
-    Expected output:
-
-    ```plaintext
-    run tests................................................................Passed
-    black-formatter..........................................................Passed
-    black-jupyter-formatter..................................................Passed
-    ruff-linter..............................................................Passed
-    mypy.....................................................................Passed
-    trim trailing whitespace.................................................Passed
-    fix end of files.........................................................Passed
-    debug statements (python)................................................Passed
-    detect private key.......................................................Passed
-    check for added large files..............................................Passed
-    prettier.................................................................Passed
-    restricted file and section..............................................Passed
-    filename snake case......................................................Passed
-    generate documentation...................................................Passed
-    ```
-
-    In the output above, "Passed" indicates that each pre-commit hook has successfully run.
-
-    By following these steps, you ensure that the codebase adheres to
-    the project's coding standards and that any issues are caught early
-    in the development process.
+By following these steps, you ensure that the codebase adheres to the project's coding standards and that any issues are caught early in the development process.
 
 ## Usage
 
@@ -249,22 +253,6 @@ To run the main application, use:
 
 ```sh
 python src/main.py
-```
-
-### Data Preprocessing
-
-To preprocess data, use the script provided in the `scripts` directory:
-
-```sh
-python scripts/preprocess_data.py
-```
-
-### Model Deployment
-
-To deploy the model on SageMaker:
-
-```sh
-python sagemaker/deploy_script.py
 ```
 
 ## Development
